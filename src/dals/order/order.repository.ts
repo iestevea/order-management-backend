@@ -8,7 +8,10 @@ export const getOrderList = async (): Promise<Order[]> =>
     date: 1,
     client: 1,
   })
-    .lean();;
+    .lean();
+
+export const getOrder = async (id: string): Promise<Order> =>
+  await OrderContext.findOne({ _id: id })
 
 export const insertOrderList = async (OrderList: Order[]) =>
   await OrderContext.insertMany(OrderList);
