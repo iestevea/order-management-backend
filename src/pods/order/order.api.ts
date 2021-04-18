@@ -13,11 +13,32 @@ orderApi.get('/', async (req, res) => {
   }
 });
 
-orderApi.get("/orders/:id", async (req, res) => {
+orderApi.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const order = await getOrder(id);
     res.send(mapOrderFromModelToApi(order));
+  } catch (error) {
+    res.status(404)
+    res.send({ error: "Order doesn't exist!" })
+  }
+})
+
+orderApi.put("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const order = await getOrder(id);
+    if (req.body.lines) {
+      order.lines = req.body.lines
+    }
+    if (req.body.date) {
+      order.date = req.body.date
+    }
+    if (req.body.client) {
+      order.client = req.body.client
+    }
+    // await order.save()
+    res.send(order);
   } catch (error) {
     res.status(404)
     res.send({ error: "Order doesn't exist!" })
