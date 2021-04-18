@@ -1,8 +1,11 @@
 import { Router } from 'express';
+const bp = require('body-parser')
 import { getOrder, getOrderList } from 'dals/order';
 import { mapOrderListFromModelToApi, mapOrderFromModelToApi } from './order.mappers';
 
 export const orderApi = Router();
+
+const jsonParser = bp.json()
 
 orderApi.get('/', async (req, res) => {
   try {
@@ -24,10 +27,11 @@ orderApi.get("/:id", async (req, res) => {
   }
 })
 
-orderApi.put("/:id", async (req, res) => {
+orderApi.put("/:id", jsonParser, async (req, res) => {
   try {
     const id = req.params.id;
     const order = await getOrder(id);
+    console.log(req.body);
     if (req.body.lines) {
       order.lines = req.body.lines
     }
@@ -37,7 +41,7 @@ orderApi.put("/:id", async (req, res) => {
     if (req.body.client) {
       order.client = req.body.client
     }
-    // await order.save()
+    await (order as any).save()
     res.send(order);
   } catch (error) {
     res.status(404)
